@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ChatApp - Register</title>
+
+  <link
+          rel="stylesheet"
+          href="css/register.css"
+  >
+
+</head>
+
+
+<body>
+
+
+<div class="register-container">
+
+
+  <div class="register-card">
+
+
+    <h1>
+      Create Account
+    </h1>
+
+
+    <p class="subtitle">
+      Join ChatApp
+    </p>
+
+
+    <form id="registerForm">
+
+
+      <!-- NAME -->
+
+      <div class="form-group">
+
+        <label for="name">
+          Name
+        </label>
+
+        <input
+                type="text"
+                id="name"
+                placeholder="Enter your name"
+                autocomplete="name"
+                required
+        >
+
+      </div>
+
+
+      <!-- PHONE -->
+
+      <div class="form-group">
+
+        <label for="phoneNumber">
+          Phone Number
+        </label>
+
+        <input
+                type="tel"
+                id="phoneNumber"
+                placeholder="Enter phone number"
+                autocomplete="tel"
+                required
+        >
+
+      </div>
+
+
+      <!-- EMAIL -->
+
+      <div class="form-group">
+
+        <label for="email">
+          Email
+        </label>
+
+        <input
+                type="email"
+                id="email"
+                placeholder="Enter email"
+                autocomplete="email"
+        >
+
+      </div>
+
+
+      <!-- PASSWORD -->
+
+      <div class="form-group">
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                autocomplete="new-password"
+                required
+        >
+
+      </div>
+
+
+      <!-- CONFIRM PASSWORD -->
+
+      <div class="form-group">
+
+        <label for="confirmPassword">
+          Confirm Password
+        </label>
+
+        <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm password"
+                autocomplete="new-password"
+                required
+        >
+
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div
+              id="errorMessage"
+              class="error-message"
+      ></div>
+
+
+      <!-- SUCCESS -->
+
+      <div
+              id="successMessage"
+              class="success-message"
+      ></div>
+
+
+      <!-- REGISTER BUTTON -->
+
+      <button
+              type="submit"
+              id="registerButton"
+      >
+        Register
+      </button>
+
+
+    </form>
+
+
+    <p class="login-link">
+
+      Already have an account?
+
+      <a href="/chatApp/">
+        Login
+      </a>
+
+    </p>
+
+
+  </div>
+
+
+</div>
+
+
+<script src="js/register.js"></script>
+
+</body>
+
+</html>

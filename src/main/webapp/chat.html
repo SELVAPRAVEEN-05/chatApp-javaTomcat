@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ChatApp - Chat</title>
+
+  <link
+          rel="stylesheet"
+          href="css/detailChat.css"
+  >
+
+</head>
+
+<body>
+
+<div class="chat-container">
+
+
+  <!-- ================= HEADER ================= -->
+
+  <header class="chat-header">
+
+    <button
+            id="backButton"
+            class="back-button"
+            type="button"
+    >
+      ←
+    </button>
+
+
+    <div class="chat-user">
+
+      <div class="profile-circle">
+
+        <img
+                id="profileImage"
+                src=""
+                alt="Profile"
+        >
+
+      </div>
+
+
+      <div class="chat-user-info">
+
+        <h2 id="chatName">
+          Loading...
+        </h2>
+
+        <p id="chatType"></p>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- ================= MESSAGES ================= -->
+
+  <main
+          id="messagesContainer"
+          class="messages-container"
+  >
+
+    <div
+            id="loadingMessage"
+            class="loading-message"
+    >
+      Loading messages...
+    </div>
+
+  </main>
+
+
+  <!-- ================= SEND MESSAGE ================= -->
+
+  <form
+          id="messageForm"
+          class="message-form"
+  >
+
+    <input
+            type="text"
+            id="messageInput"
+            placeholder="Type a message..."
+            autocomplete="off"
+    >
+
+    <button
+            type="submit"
+            id="sendButton"
+    >
+      Send
+    </button>
+
+  </form>
+
+</div>
+
+
+<script src="js/detailchat.js"></script>
+
+</body>
+
+</html>

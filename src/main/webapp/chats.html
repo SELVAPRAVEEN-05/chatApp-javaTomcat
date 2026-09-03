@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ChatApp - My Chats</title>
+
+  <link
+          rel="stylesheet"
+          href="css/chats.css"
+  >
+
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- =========================================
+       HEADER
+       ========================================= -->
+
+  <header class="header">
+
+    <h1>Chats</h1>
+
+    <div class="header-actions">
+
+      <button id="profileButton">
+        Profile
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       CHAT FILTERS
+       ========================================= -->
+
+  <div class="chat-filters">
+
+    <button
+            class="filter-button active"
+            data-filter="all"
+    >
+      All
+    </button>
+
+    <button
+            class="filter-button"
+            data-filter="unread"
+    >
+      Unread
+    </button>
+
+    <button
+            class="filter-button"
+            data-filter="read"
+    >
+      Read
+    </button>
+
+    <button
+            class="filter-button"
+            data-filter="groups"
+    >
+      Groups
+    </button>
+
+  </div>
+
+
+  <!-- =========================================
+       CHAT LIST
+       ========================================= -->
+
+  <main
+          id="chatList"
+          class="chat-list"
+  >
+
+    <p class="loading">
+      Loading chats...
+    </p>
+
+  </main>
+
+</div>
+
+
+<script src="js/chats.js"></script>
+
+</body>
+
+</html>

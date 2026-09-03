@@ -1,0 +1,260 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    background: #f5f5f5;
+}
+
+.app {
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    min-height: 100vh;
+
+    background: white;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.header-actions button {
+    padding: 8px 14px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================
+   FILTERS
+   ========================================= */
+
+.chat-filters {
+
+    display: flex;
+
+    gap: 8px;
+
+    padding: 12px 20px;
+
+    border-bottom: 1px solid #ddd;
+
+    overflow-x: auto;
+}
+
+.filter-button {
+
+    padding: 8px 16px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 20px;
+
+    background: white;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.filter-button.active {
+
+    background: #222;
+
+    color: white;
+
+    border-color: #222;
+}
+
+
+/* =========================================
+   CHAT LIST
+   ========================================= */
+
+.chat-list {
+    width: 100%;
+}
+
+.chat-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px 20px;
+
+    border-bottom: 1px solid #eee;
+
+    cursor: pointer;
+}
+
+.chat-item:hover {
+    background: #f7f7f7;
+}
+
+
+/* =========================================
+   PROFILE IMAGE
+   ========================================= */
+
+.chat-image {
+
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================
+   CHAT INFORMATION
+   ========================================= */
+
+.chat-info {
+
+    flex: 1;
+
+    min-width: 0;
+}
+
+.chat-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.chat-name {
+
+    font-weight: bold;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.chat-time {
+
+    font-size: 12px;
+
+    color: #888;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   BOTTOM
+   ========================================= */
+
+.chat-bottom {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 5px;
+}
+
+.last-message {
+
+    color: #777;
+
+    font-size: 14px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   UNREAD COUNT
+   ========================================= */
+
+.unread-count {
+
+    min-width: 22px;
+
+    height: 22px;
+
+    padding: 0 6px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #222;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+
+/* =========================================
+   LOADING / EMPTY / ERROR
+   ========================================= */
+
+.loading,
+.empty,
+.error {
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #777;
+}

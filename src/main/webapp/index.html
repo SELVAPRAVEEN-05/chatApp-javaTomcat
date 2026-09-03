@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ChatApp - Login</title>
+
+  <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+<div class="login-container">
+
+  <div class="login-card">
+
+    <h1>ChatApp</h1>
+
+    <p class="subtitle">
+      Login to continue chatting
+    </p>
+
+    <form id="loginForm">
+
+      <div class="input-group">
+        <label for="phoneNumber">
+          Phone Number
+        </label>
+
+        <input
+                type="text"
+                id="phoneNumber"
+                placeholder="Enter phone number"
+                maxlength="15"
+                required
+        >
+      </div>
+
+
+      <div class="input-group">
+        <label for="password">
+          Password
+        </label>
+
+        <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                required
+        >
+      </div>
+
+
+      <p id="errorMessage" class="error-message"></p>
+
+      <button type="submit" id="loginButton">
+        Login
+      </button>
+
+
+
+      <p class="login-link">
+
+        Create new account?
+
+        <a href="register.html">
+          Register
+        </a>
+
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script src="js/login.js"></script>
+
+</body>
+</html>
