@@ -31,7 +31,7 @@ const loadingMessage =
 //
 // Example:
 //
-// chat.html?chatId=1
+// detailchat.html?chatId=1
 // =========================================================
 
 const urlParams =
@@ -59,12 +59,53 @@ if (!chatId) {
 
 
 // =========================================================
+// CURRENT LOGGED-IN USER ID
+// =========================================================
+//
+// This value comes from:
+//
+// GET /api/chats/{chatId}/messages
+//
+// Backend decides the user ID using HttpSession.
+//
+// We do NOT use sessionStorage.
+//
+// We do NOT manually provide userId to WebSocket.
+//
+// =========================================================
+
+let loggedInUserId = null;
+
+
+// =========================================================
+// WEBSOCKET
+// =========================================================
+
+let socket = null;
+
+
+// =========================================================
 // BACK BUTTON
 // =========================================================
 
 backButton.addEventListener(
     "click",
     function () {
+
+        /*
+         * Close WebSocket before leaving
+         * the chat page.
+         */
+
+        if (
+            socket &&
+            socket.readyState ===
+            WebSocket.OPEN
+        ) {
+
+            socket.close();
+        }
+
 
         window.location.href =
             "chats.html";
@@ -73,9 +114,9 @@ backButton.addEventListener(
 
 
 // =========================================================
-// LOAD CHAT + MESSAGES
+// LOAD CHAT + OLD MESSAGES
 //
-// ONE API REQUEST
+// ONE REST API REQUEST
 //
 // GET /api/chats/{chatId}/messages
 // =========================================================
@@ -92,7 +133,7 @@ async function loadChatMessages() {
 
 
         // -------------------------------------------------
-        // ONE REQUEST ONLY
+        // GET CHAT + MESSAGES
         // -------------------------------------------------
 
         const response =
@@ -112,13 +153,15 @@ async function loadChatMessages() {
         // SESSION EXPIRED
         // -------------------------------------------------
 
-        if (response.status === 401) {
+        if (
+            response.status === 401
+        ) {
 
             window.location.replace(
                 "/chatApp/"
             );
 
-            return;
+            return false;
         }
 
 
@@ -126,7 +169,9 @@ async function loadChatMessages() {
         // NOT A MEMBER
         // -------------------------------------------------
 
-        if (response.status === 403) {
+        if (
+            response.status === 403
+        ) {
 
             alert(
                 "You are not a member of this chat."
@@ -136,7 +181,7 @@ async function loadChatMessages() {
                 "chats.html"
             );
 
-            return;
+            return false;
         }
 
 
@@ -153,7 +198,7 @@ async function loadChatMessages() {
 
 
         // -------------------------------------------------
-        // GET RESPONSE
+        // GET JSON
         // -------------------------------------------------
 
         const data =
@@ -164,10 +209,16 @@ async function loadChatMessages() {
         // CURRENT USER ID
         // -------------------------------------------------
 
-        const loggedInUserId =
+        loggedInUserId =
             Number(
                 data.currentUserId
             );
+
+
+        console.log(
+            "Current user ID:",
+            loggedInUserId
+        );
 
 
         // -------------------------------------------------
@@ -198,7 +249,9 @@ async function loadChatMessages() {
         // DISPLAY PROFILE IMAGE
         // -------------------------------------------------
 
-        if (chat.profileImage) {
+        if (
+            chat.profileImage
+        ) {
 
             profileImage.src =
                 chat.profileImage;
@@ -214,7 +267,7 @@ async function loadChatMessages() {
 
 
         // -------------------------------------------------
-        // GET MESSAGES
+        // GET OLD MESSAGES
         // -------------------------------------------------
 
         const messages =
@@ -230,7 +283,7 @@ async function loadChatMessages() {
 
 
         // -------------------------------------------------
-        // CLEAR MESSAGES
+        // CLEAR CONTAINER
         // -------------------------------------------------
 
         messagesContainer.innerHTML =
@@ -241,38 +294,27 @@ async function loadChatMessages() {
         // NO MESSAGES
         // -------------------------------------------------
 
-        if (messages.length === 0) {
+        if (
+            messages.length === 0
+        ) {
 
-            const emptyMessage =
-                document.createElement("div");
+            showEmptyMessage();
 
-            emptyMessage.className =
-                "empty-message";
+        } else {
 
-            emptyMessage.textContent =
-                "No messages yet.";
+            // -------------------------------------------------
+            // DISPLAY OLD MESSAGES
+            // -------------------------------------------------
 
-            messagesContainer.appendChild(
-                emptyMessage
+            messages.forEach(
+                message => {
+
+                    displayMessage(
+                        message
+                    );
+                }
             );
-
-            return;
         }
-
-
-        // -------------------------------------------------
-        // DISPLAY MESSAGES
-        // -------------------------------------------------
-
-        messages.forEach(
-            message => {
-
-                displayMessage(
-                    message,
-                    loggedInUserId
-                );
-            }
-        );
 
 
         // -------------------------------------------------
@@ -280,6 +322,9 @@ async function loadChatMessages() {
         // -------------------------------------------------
 
         scrollToBottom();
+
+
+        return true;
 
 
     } catch (error) {
@@ -296,6 +341,67 @@ async function loadChatMessages() {
 
         loadingMessage.textContent =
             "Unable to load chat.";
+
+
+        return false;
+    }
+}
+
+
+// =========================================================
+// SHOW EMPTY MESSAGE
+// =========================================================
+
+function showEmptyMessage() {
+
+    /*
+     * Do not create multiple
+     * "No messages yet." elements.
+     */
+
+    if (
+        messagesContainer.querySelector(
+            ".empty-message"
+        )
+    ) {
+
+        return;
+    }
+
+
+    const emptyMessage =
+        document.createElement("div");
+
+
+    emptyMessage.className =
+        "empty-message";
+
+
+    emptyMessage.textContent =
+        "No messages yet.";
+
+
+    messagesContainer.appendChild(
+        emptyMessage
+    );
+}
+
+
+// =========================================================
+// REMOVE EMPTY MESSAGE
+// =========================================================
+
+function removeEmptyMessage() {
+
+    const emptyMessage =
+        messagesContainer.querySelector(
+            ".empty-message"
+        );
+
+
+    if (emptyMessage) {
+
+        emptyMessage.remove();
     }
 }
 
@@ -305,16 +411,23 @@ async function loadChatMessages() {
 // =========================================================
 
 function displayMessage(
-    message,
-    loggedInUserId
+    message
 ) {
+
+    /*
+     * Remove "No messages yet."
+     * when a real message arrives.
+     */
+
+    removeEmptyMessage();
+
 
     const messageElement =
         document.createElement("div");
 
 
     // -----------------------------------------------------
-    // CHECK WHETHER MESSAGE BELONGS TO CURRENT USER
+    // CHECK SENDER
     // -----------------------------------------------------
 
     if (
@@ -350,7 +463,8 @@ function displayMessage(
 
 
         senderName.textContent =
-            message.senderName;
+            message.senderName ||
+            "Unknown";
 
 
         messageElement.appendChild(
@@ -384,7 +498,9 @@ function displayMessage(
     // MESSAGE TIME
     // -----------------------------------------------------
 
-    if (message.createdAt) {
+    if (
+        message.createdAt
+    ) {
 
         const messageTime =
             document.createElement("div");
@@ -407,7 +523,7 @@ function displayMessage(
 
 
     // -----------------------------------------------------
-    // ADD TO CONTAINER
+    // ADD MESSAGE TO CONTAINER
     // -----------------------------------------------------
 
     messagesContainer.appendChild(
@@ -417,17 +533,34 @@ function displayMessage(
 
 
 // =========================================================
-// SEND MESSAGE
+// SEND MESSAGE THROUGH WEBSOCKET
+//
+// IMPORTANT:
+//
+// We NO LONGER use:
 //
 // POST /api/chats/{chatId}/messages
+//
+// WebSocket is now responsible for:
+//
+// 1. Sending message
+// 2. Authentication
+// 3. Membership check
+// 4. Saving message
+// 5. Broadcasting message
+//
 // =========================================================
 
 messageForm.addEventListener(
     "submit",
-    async function (event) {
+    function (event) {
 
         event.preventDefault();
 
+
+        // -------------------------------------------------
+        // GET MESSAGE
+        // -------------------------------------------------
 
         const message =
             messageInput.value.trim();
@@ -444,7 +577,25 @@ messageForm.addEventListener(
 
 
         // -------------------------------------------------
-        // DISABLE BUTTON
+        // CHECK WEBSOCKET
+        // -------------------------------------------------
+
+        if (
+            !socket ||
+            socket.readyState !==
+            WebSocket.OPEN
+        ) {
+
+            alert(
+                "WebSocket is not connected."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // DISABLE SEND BUTTON
         // -------------------------------------------------
 
         sendButton.disabled =
@@ -454,88 +605,32 @@ messageForm.addEventListener(
         try {
 
             // -------------------------------------------------
-            // SEND REQUEST
+            // SEND MESSAGE THROUGH WEBSOCKET
+            // -------------------------------------------------
+            //
+            // We DO NOT send:
+            //
+            // userId
+            //
+            // chatId
+            //
+            // The server already knows:
+            //
+            // userId -> WebSocket session
+            // chatId -> JOINED chat
+            //
             // -------------------------------------------------
 
-            const response =
-                await fetch(
-                    `/chatApp/api/chats/${encodeURIComponent(chatId)}/messages`,
-                    {
-                        method: "POST",
+            socket.send(
+                JSON.stringify({
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    type:
+                        "MESSAGE",
 
-                        credentials: "include",
-
-                        body:
-                            JSON.stringify({
-                                message:
-                                message
-                            })
-                    }
-                );
-
-
-            // -------------------------------------------------
-            // SESSION EXPIRED
-            // -------------------------------------------------
-
-            if (response.status === 401) {
-
-                window.location.replace(
-                    "/chatApp/"
-                );
-
-                return;
-            }
-
-
-            // -------------------------------------------------
-            // NOT MEMBER
-            // -------------------------------------------------
-
-            if (response.status === 403) {
-
-                alert(
-                    "You are not a member of this chat."
-                );
-
-                window.location.replace(
-                    "chats.html"
-                );
-
-                return;
-            }
-
-
-            // -------------------------------------------------
-            // OTHER ERROR
-            // -------------------------------------------------
-
-            if (!response.ok) {
-
-                const error =
-                    await response.json();
-
-
-                alert(
-                    error.message ||
-                    "Failed to send message."
-                );
-
-                return;
-            }
-
-
-            // -------------------------------------------------
-            // CREATED MESSAGE
-            // -------------------------------------------------
-
-            const createdMessage =
-                await response.json();
+                    message:
+                    message
+                })
+            );
 
 
             // -------------------------------------------------
@@ -546,30 +641,10 @@ messageForm.addEventListener(
                 "";
 
 
-            // -------------------------------------------------
-            // GET CURRENT USER ID
-            //
-            // We can determine it from senderId here because
-            // this message was created by the logged-in user.
-            // -------------------------------------------------
-
-            displayMessage(
-                createdMessage,
-                Number(createdMessage.senderId)
-            );
-
-
-            // -------------------------------------------------
-            // SCROLL
-            // -------------------------------------------------
-
-            scrollToBottom();
-
-
         } catch (error) {
 
             console.error(
-                "Send message error:",
+                "WebSocket send error:",
                 error
             );
 
@@ -577,7 +652,6 @@ messageForm.addEventListener(
             alert(
                 "Unable to send message."
             );
-
 
         } finally {
 
@@ -589,6 +663,240 @@ messageForm.addEventListener(
         }
     }
 );
+
+
+// =========================================================
+// CONNECT TO WEBSOCKET
+// =========================================================
+//
+// WebSocket:
+//
+// ws://localhost:8080/chatApp/ws/chat
+//
+// =========================================================
+
+function connectWebSocket() {
+
+    console.log(
+        "Connecting to WebSocket..."
+    );
+
+
+    // -------------------------------------------------
+    // CREATE CONNECTION
+    // -------------------------------------------------
+
+    socket =
+        new WebSocket(
+            "ws://localhost:8080/chatApp/ws/chat"
+        );
+
+
+    // =====================================================
+    // WEBSOCKET OPEN
+    // =====================================================
+
+    socket.onopen =
+        function () {
+
+            console.log(
+                "CONNECTED TO WEBSOCKET"
+            );
+
+
+            // -------------------------------------------------
+            // JOIN CURRENT CHAT
+            // -------------------------------------------------
+            //
+            // Example:
+            //
+            // {
+            //     "type": "JOIN",
+            //     "chatId": 1
+            // }
+            //
+            // -------------------------------------------------
+
+            socket.send(
+                JSON.stringify({
+
+                    type:
+                        "JOIN",
+
+                    chatId:
+                        Number(chatId)
+                })
+            );
+
+
+            console.log(
+                "JOIN request sent for chat:",
+                chatId
+            );
+        };
+
+
+    // =====================================================
+    // RECEIVE MESSAGE
+    // =====================================================
+
+    socket.onmessage =
+        function (event) {
+
+            console.log(
+                "SERVER:",
+                event.data
+            );
+
+
+            let data;
+
+
+            // -------------------------------------------------
+            // PARSE JSON
+            // -------------------------------------------------
+
+            try {
+
+                data =
+                    JSON.parse(
+                        event.data
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid WebSocket JSON:",
+                    error
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // JOINED
+            // =================================================
+
+            if (
+                data.type ===
+                "JOINED"
+            ) {
+
+                console.log(
+                    "Joined chat:",
+                    data.chatId
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // NEW MESSAGE
+            // =================================================
+
+            if (
+                data.type ===
+                "MESSAGE"
+            ) {
+
+                /*
+                 * Server has already:
+                 *
+                 * 1. Authenticated user
+                 * 2. Checked membership
+                 * 3. Saved message
+                 * 4. Broadcast message
+                 *
+                 * So simply display it.
+                 */
+
+                displayMessage(
+                    data
+                );
+
+
+                scrollToBottom();
+
+
+                return;
+            }
+
+
+            // =================================================
+            // ERROR
+            // =================================================
+
+            if (
+                data.type ===
+                "ERROR"
+            ) {
+
+                console.error(
+                    "WebSocket error:",
+                    data.message
+                );
+
+
+                alert(
+                    data.message
+                );
+
+
+                return;
+            }
+
+
+            // =================================================
+            // UNKNOWN RESPONSE
+            // =================================================
+
+            console.log(
+                "Unknown WebSocket response:",
+                data
+            );
+        };
+
+
+    // =====================================================
+    // WEBSOCKET CLOSE
+    // =====================================================
+
+    socket.onclose =
+        function (event) {
+
+            console.log(
+                "DISCONNECTED FROM WEBSOCKET"
+            );
+
+
+            console.log(
+                "Close code:",
+                event.code
+            );
+
+
+            console.log(
+                "Close reason:",
+                event.reason
+            );
+        };
+
+
+    // =====================================================
+    // WEBSOCKET ERROR
+    // =====================================================
+
+    socket.onerror =
+        function (error) {
+
+            console.error(
+                "WEBSOCKET ERROR:",
+                error
+            );
+        };
+}
 
 
 // =========================================================
@@ -633,7 +941,56 @@ function scrollToBottom() {
 
 
 // =========================================================
-// INITIAL LOAD
+// INITIALIZE CHAT
+// =========================================================
+//
+// 1. REST GET
+//       ↓
+//    Load old messages
+//
+// 2. Get currentUserId
+//
+// 3. Connect WebSocket
+//
+// 4. JOIN chat
+//
 // =========================================================
 
-loadChatMessages();
+async function initializeChat() {
+
+    console.log(
+        "Initializing chat..."
+    );
+
+
+    // -------------------------------------------------
+    // LOAD CHAT + OLD MESSAGES
+    // -------------------------------------------------
+
+    const chatLoaded =
+        await loadChatMessages();
+
+
+    // -------------------------------------------------
+    // STOP IF REST REQUEST FAILED
+    // -------------------------------------------------
+
+    if (!chatLoaded) {
+
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // CONNECT WEBSOCKET
+    // -------------------------------------------------
+
+    connectWebSocket();
+}
+
+
+// =========================================================
+// START APPLICATION
+// =========================================================
+
+initializeChat();
