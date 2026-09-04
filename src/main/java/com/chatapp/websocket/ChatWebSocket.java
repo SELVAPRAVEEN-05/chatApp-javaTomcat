@@ -871,7 +871,6 @@ public class ChatWebSocket {
             }
         }
 
-
         System.out.println(
                 "WebSocket disconnected: " +
                         sessionId
