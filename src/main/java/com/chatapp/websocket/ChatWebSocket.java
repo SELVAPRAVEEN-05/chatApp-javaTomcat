@@ -620,6 +620,7 @@ public class ChatWebSocket {
 
         } catch (Exception e) {
 
+
             System.err.println(
                     "Broadcast failed"
             );
@@ -632,7 +633,7 @@ public class ChatWebSocket {
             );
         }
     }
-    
+
     // =========================================================
     // BROADCAST MESSAGE
     // =========================================================
