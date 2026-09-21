@@ -15,7 +15,6 @@ public class ChatService {
                 new ChatDAO();
     }
 
-
     public List<Chat> getUserChats(
             Long userId,
             String filter
