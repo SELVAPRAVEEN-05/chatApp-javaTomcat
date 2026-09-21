@@ -79,8 +79,6 @@
 
     </servlet-mapping>
 
-
-
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
         <servlet-class>com.chatapp.controller.ProfileServlet</servlet-class>

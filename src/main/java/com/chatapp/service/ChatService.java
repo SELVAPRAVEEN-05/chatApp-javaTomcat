@@ -9,13 +9,11 @@ public class ChatService {
 
     private final ChatDAO chatDAO;
 
-
     public ChatService() {
 
         this.chatDAO =
                 new ChatDAO();
     }
-
 
     public List<Chat> getUserChats(
             Long userId,
