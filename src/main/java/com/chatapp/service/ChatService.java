@@ -9,7 +9,6 @@ public class ChatService {
 
     private final ChatDAO chatDAO;
 
-
     public ChatService() {
 
         this.chatDAO =
