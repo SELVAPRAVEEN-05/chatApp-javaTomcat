@@ -170,8 +170,6 @@ public class ChatDAO {
                     AND c.chat_type = 'GROUP'
                     """);
         }
-
-
         /*
          * =========================================
          * ORDER
