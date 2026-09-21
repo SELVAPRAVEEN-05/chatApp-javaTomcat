@@ -114,7 +114,6 @@ public class ChatServlet extends HttpServlet {
          * 3. GET FILTER
          * =========================================
          * Examples:
-         *
          * /api/chats?filter=all
          * /api/chats?filter=unread
          * /api/chats?filter=read
