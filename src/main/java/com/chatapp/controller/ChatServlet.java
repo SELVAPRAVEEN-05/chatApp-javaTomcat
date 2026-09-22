@@ -108,7 +108,9 @@ public class ChatServlet extends HttpServlet {
             return;
         }
 
+//hi
 
+        // how are you
         /*
          * =========================================
          * 3. GET FILTER
