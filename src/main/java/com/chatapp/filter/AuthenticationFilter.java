@@ -31,7 +31,6 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse httpResponse =
                 (HttpServletResponse) response;
 
-
         HttpSession session =
                 httpRequest.getSession(false);
 
@@ -59,7 +58,6 @@ public class AuthenticationFilter implements Filter {
 
             return;
         }
-
 
         // User is authenticated
         chain.doFilter(
